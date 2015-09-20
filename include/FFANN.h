@@ -4,6 +4,8 @@
 #ifndef FFANN_H
 #define FFANN_H
 
+#include <iostream>
+#include <cstdlib>
 #include <cmath>
 #include <vector>
 #include "MatrixMath.h"
