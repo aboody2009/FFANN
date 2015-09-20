@@ -3,6 +3,7 @@
 #define MATRIXMATH_H
 
 #include <iostream>
+#include <cstdlib>
 #include <vector>
 
 class Matrix
@@ -12,7 +13,7 @@ public:
 	~Matrix();
 	Matrix(int row_dim, int col_dim);
 	Matrix(int row_dim, int col_dim, float* elements);
-	Matrix operator*(Matrix& m);
+	Matrix operator*(const Matrix& m);
 	Matrix operator*(const float& f);
 	Matrix operator+(const Matrix& m);
 	Matrix Transpose();
