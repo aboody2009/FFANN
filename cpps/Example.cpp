@@ -2,6 +2,7 @@
 //This is example code which creates a neural network and trains it to recognize the larger number out of a pair of floats ranging -1 to 1
 //I ran this code with 1000000 examples at a learning rate of 0.001, and achieved 95% to 99% accuracy. I recommend these training settings
 #include <iostream>
+#include <cstdlib>
 #include <vector>
 #include <cmath>
 #include <time.h>
