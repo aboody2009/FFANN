@@ -40,7 +40,7 @@ Matrix::Matrix(int row_dim, int col_dim, float* elements)
 }
 
 //matrix multiplication
-Matrix Matrix::operator*(Matrix& m)
+Matrix Matrix::operator*(const Matrix& m)
 {
 	Matrix out(this->Dimensions[0], m.Dimensions[1]);
 	if (this->Dimensions[1] != m.Dimensions[0])
