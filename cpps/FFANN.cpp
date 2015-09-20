@@ -1,5 +1,7 @@
 //Sully Chen 2015
 
+#include <iostream>
+#include <cstdlib>
 #include <cmath>
 #include <vector>
 #include "MatrixMath.h"
