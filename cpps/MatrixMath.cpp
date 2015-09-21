@@ -18,10 +18,7 @@ Matrix::Matrix(int row_dim, int col_dim)
 {
 	Dimensions[0] = row_dim;
 	Dimensions[1] = col_dim;
-	for (int i = 0; i < row_dim * col_dim; i++)
-	{
-		Elements.push_back(0.0f);
-	}
+	Elements = std::vector<float>(row_dim * col_dim, 0.0f);
 }
 
 //initialize matrix with elements specified
@@ -29,14 +26,7 @@ Matrix::Matrix(int row_dim, int col_dim, float* elements)
 {
 	Dimensions[0] = row_dim;
 	Dimensions[1] = col_dim;
-	for (int i = 0; i < row_dim * col_dim; i++)
-	{
-		Elements.push_back(0.0f);
-	}
-	for (int i = 0; i < row_dim * col_dim; i++)
-	{
-		Elements[i] = elements[i];
-	}
+	Elements = std::vector<float>(elements, elements + row_dim*col_dim);
 }
 
 //matrix multiplication
