@@ -1,6 +1,6 @@
 # FFANN
 09/18/2015
-This is an easy to use minimal feed forward neural network library. Setup instructions are in the readme!
+This is an easy to use minimal feed forward artificial neural network library. Setup instructions are in the readme!
 
 In your compiler, use the include folder for the headers, and the lib folder for the libraries
 Make sure to link ffann.lib and matrixmath.lib
