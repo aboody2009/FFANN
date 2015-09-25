@@ -113,7 +113,7 @@ float FFANN::TrainWithBackPropagation(Matrix input, Matrix output, float learnin
 
 	//put the deltas into a new vector object in the correct order
 	std::vector<Matrix> deltas;
-	for (int i = temp_deltas.size() - 1; i >= 0; i--)
+	for (int i = (int)temp_deltas.size() - 1; i >= 0; i--)
 	{
 		deltas.push_back(temp_deltas[i]);
 	}
@@ -222,4 +222,48 @@ FFANN BreedNetworks(FFANN Parent1, FFANN Parent2, float mutation_probability, fl
 	}
 
 	return offspringnetwork;
+}
+
+RNN::RNN(int input_vector_size, int num_layers) : InputVectorSize(input_vector_size), Num_Layers(num_layers)
+{
+    //the first elements of the weights matrix vector object is just a filler to make the math look cleaner, it's not actually used
+    Matrix temp;
+    Weights.push_back(temp);
+    
+    //create randomized weight matrices
+    for (int i = 0; i < num_layers - 1; i++)
+    {
+        Matrix m(input_vector_size, input_vector_size);
+        for (int j = 0; j < input_vector_size; j++)
+        {
+            for (int k = 0; k < input_vector_size; k++)
+            {
+                m.Elements[j * m.Dimensions[1] + k] = (rand() % 200 - 100) / 1000.0f;
+            }
+        }
+        Weights.push_back(m);
+    }
+    
+    //create recurrent weights
+    //the first and last recurrent weight matrices are placeholders, they are not used
+    for (int i = 0; i < num_layers; i++)
+    {
+        Matrix m(input_vector_size, 1);
+        for (int j = 0; j < input_vector_size; j++)
+        {
+            m.Elements[j] = (rand() % 200 - 100) / 1000.0f;
+        }
+        RecurrentWeights.push_back(m);
+    }
+    
+    //create biases
+    for (int i = 0; i < num_layers; i++)
+    {
+        Matrix m(input_vector_size, 1);
+        for (int j = 0; j < input_vector_size; j++)
+        {
+            m.Elements[j] = (rand() % 200 - 100) / 1000.0f;
+        }
+        Biases.push_back(m);
+    }
 }

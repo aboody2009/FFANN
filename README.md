@@ -12,3 +12,4 @@ There is example code in the cpps folder, along with the source code for the lib
 Have fun!
 
 09/19/2015: Support for genetic algorithms has been added! *Note: it has not been tested very much
+09/25/2015: Began work on recurrent neural network class, not functional yet

@@ -7,17 +7,17 @@
 #include <cmath>
 #include <time.h>
 #include <fstream>
-#include <MatrixMath.h>
-#include <FFANN.h>
+#include "MatrixMath.h"
+#include "FFANN.h"
 
 int main()
 {
 	//seed random number generator
-	srand(time(NULL));
+	srand((uint)time(NULL));
 	//create structure of neural network: 2 input neurons, 2 output neurons
-	int dimensions[2] = { 2, 2 };
+	int dimensions[3] = { 2, 3, 2 };
 	//create the neural network
-	FFANN testFFANN(dimensions, 2);
+	FFANN testFFANN(dimensions, 3);
 
 	int num_examples;
 	float learning_rate = 0.0f;
