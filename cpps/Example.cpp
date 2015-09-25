@@ -101,7 +101,33 @@ int main()
 	}
 
 	std::cout << "Done Testing! Here are the results:\n" << std::endl << "Accuracy: " << num_correct * 100 / num_trials << "% correct" << std::endl;
-
+    
 	system("PAUSE");
+    
+    std::cout << "\nType \"c\" to continue to RNN test, otherwise type something else and the program will quit" << std::endl;
+    char answer;
+    std::cin >> answer;
+    if (answer != 'c')
+        return 0;
+    std::cout << "\n\n\nRunning RNN Test..." << std::endl;
+    RNN testRNN(5 , 3);
+    std::vector<std::vector<Matrix> > rnnoutputdata;
+    Matrix rnninput(5, 1);
+    for (int i = 0; i < 5; i++)
+    {
+        rnninput.Elements[i] = (rand() % 200 - 100) / 100.0f;
+    }
+    rnnoutputdata = testRNN.FeedForward(rnninput, 10);
+    for (int i = 0; i < rnnoutputdata.size(); i++)
+    {
+        for (int j = 0; j < rnnoutputdata[i].size(); j++)
+        {
+            rnnoutputdata[i][j].CoutMatrix();
+            std::cout << "\n";
+        }
+        std::cout << "\n";
+        std::cout << "\n";
+    }
+    
 	return 0;
 }

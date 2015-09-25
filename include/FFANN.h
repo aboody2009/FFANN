@@ -28,7 +28,8 @@ class RNN
 {
 public:
     RNN(int input_vector_size, int num_layers);
-    std::vector<std::vector<Matrix> > Feedforward(Matrix input, int num_passes); //returns the activations of every neuron in each layer of all passes
+    std::vector<std::vector<Matrix> > FeedForward(Matrix input, int num_passes); //returns the activations of every neuron in each layer of all passes
+    std::vector<Matrix> PartialFeedFoward(Matrix input, std::vector<Matrix> recurrences); //used in one time step of the full feedforward pass
     std::vector<Matrix> Weights;
     std::vector<Matrix> Biases;
     std::vector<Matrix> RecurrentWeights;

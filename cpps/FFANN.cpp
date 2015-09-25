@@ -267,3 +267,63 @@ RNN::RNN(int input_vector_size, int num_layers) : InputVectorSize(input_vector_s
         Biases.push_back(m);
     }
 }
+
+std::vector<std::vector<Matrix> > RNN::FeedForward(Matrix input, int num_passes)
+{
+    std::vector<std::vector<Matrix> > networkdata;
+    Matrix prev_output;
+    for (int i = 0; i < num_passes; i++)
+    {
+        if (i == 0)
+        {
+            std::vector<Matrix> zerorecurrence;
+            for (int j = 0; j < Num_Layers; j++)
+            {
+                Matrix zr(InputVectorSize, 1);
+                zerorecurrence.push_back(zr);
+            }
+            networkdata.push_back(PartialFeedFoward(input, zerorecurrence));
+        }
+        else
+        {
+            networkdata.push_back(PartialFeedFoward(networkdata[networkdata.size() - 1][Num_Layers - 1], networkdata[networkdata.size() - 1]));
+        }
+    }
+    
+    return networkdata;
+}
+
+std::vector<Matrix> RNN::PartialFeedFoward(Matrix input, std::vector<Matrix> recurrences)
+{
+    std::vector<Matrix> outputs;
+    //Add biases and apply activation function to each input element
+    for (int i = 0; i < input.Dimensions[0]; i++)
+    {
+        input.Elements[i] += Biases[0].Elements[i];
+        input.Elements[i] = 1 / (1 + pow(2.718281828459f, -input.Elements[i]));
+    }
+    outputs.push_back(input);
+    
+    //feed forward calculation
+    for (int i = 1; i < Num_Layers; i++)
+    {
+        //feed forward
+        Matrix z;
+        z = Weights[i].Transpose() * outputs[i - 1] + Biases[i];
+        
+        for (int j = 0; j < z.Dimensions[0]; j++)
+        {
+            z.Elements[j] += recurrences[i].Elements[j] * RecurrentWeights[i].Elements[j];
+        }
+        
+        outputs.push_back(z);
+        
+        //Apply activation function
+        for (int j = 0; j < outputs[i].Dimensions[0]; j++)
+        {
+            outputs[i].Elements[j] = 1 / (1 + pow(2.718281828459f, -outputs[i].Elements[j]));
+        }
+    }
+    
+    return outputs;
+}
