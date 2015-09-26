@@ -328,6 +328,7 @@ std::vector<Matrix> RNN::PartialFeedFoward(Matrix input, std::vector<Matrix> rec
     return outputs;
 }
 
+//BUGGY, DOESN'T WORK YET
 void RNN::TrainWithBackPropagation(std::vector<Matrix> sequence, double learning_rate)
 {
     //do a feed forward pass, with the sequence as the input
@@ -364,6 +365,38 @@ void RNN::TrainWithBackPropagation(std::vector<Matrix> sequence, double learning
     }
     
     std::vector<std::vector<Matrix> > flippednetworkdeltas; //put the deltas in the right order, just makes things easier
+    for (int i = (int)networkdeltas.size() - 1; i >= 0; i--)
+    {
+        flippednetworkdeltas.push_back(networkdeltas[i]);
+    }
+    
+    //update weights and biases
+    for (int i = 0; i < flippednetworkdeltas.size() - 1; i++)
+    {
+        //update biases
+        for (int j = 0; j < Biases.size(); j++)
+        {
+            Biases[j] = Biases[j] + flippednetworkdeltas[i][j] * (-1.0f * learning_rate);
+        }
+        
+        //update weights
+        for (int j = 1; j < Weights.size(); j++)
+        {
+            Weights[j] = Weights[j] + ((networkdata[i][j - 1] * networkdeltas[i][j].Transpose()) * (-1.0f * learning_rate));
+        }
+        
+        //update recurrent weights
+        if (i != flippednetworkdeltas.size() - 2)
+        {
+            for (int j = 1; j < RecurrentWeights.size(); j++)
+            {
+                for (int k = 0; k < InputVectorSize; k++)
+                {
+                    RecurrentWeights[j].Elements[k] += networkdata[i][j].Elements[k] * networkdeltas[i + 1][j].Elements[k] * -1.0f * learning_rate;
+                }
+            }
+        }
+    }
 }
 
 std::vector<Matrix> RNN::CalculateInitialDeltas(Matrix output, std::vector<Matrix> outputs)

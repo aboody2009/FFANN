@@ -132,6 +132,8 @@ int main()
     }
     */
     
+    /*
+    //RNN CODE NOT WORKING YET
     //we will train this network on a sine wave
     RNN testRNN2(1, 3);
     
@@ -144,7 +146,20 @@ int main()
         sequence.push_back(s);
     }
     
-    testRNN2.TrainWithBackPropagation(sequence, 0.001f);
+    for (int i = 0; i < 10000; i++)
+    {
+        testRNN2.TrainWithBackPropagation(sequence, 0.001f);
+        if (i % 100 == 0)
+            std::cout << i << " iterations complete" << std::endl;
+    }
     
+    //test the network
+    std::vector<std::vector<Matrix> > RNNTestData = testRNN2.FeedForward(sequence[0], 100);
+    for (int i = 0; i < RNNTestData.size(); i++)
+    {
+        RNNTestData[i][RNNTestData.size() - 1].CoutMatrix();
+    }
+    */
+     
 	return 0;
 }
