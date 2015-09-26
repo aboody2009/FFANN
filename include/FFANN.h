@@ -29,13 +29,16 @@ class RNN
 public:
     RNN(int input_vector_size, int num_layers);
     std::vector<std::vector<Matrix> > FeedForward(Matrix input, int num_passes); //returns the activations of every neuron in each layer of all passes
-    std::vector<Matrix> PartialFeedFoward(Matrix input, std::vector<Matrix> recurrences); //used in one time step of the full feedforward pass
     void TrainWithBackPropagation(std::vector<Matrix> sequence, double learning_rate); //trian with backpropagation
     std::vector<Matrix> Weights;
     std::vector<Matrix> Biases;
     std::vector<Matrix> RecurrentWeights;
     int InputVectorSize;
     int Num_Layers;
+private:
+    std::vector<Matrix> PartialFeedFoward(Matrix input, std::vector<Matrix> recurrences); //used in one time step of the full feedforward pass
+    std::vector<Matrix> CalculateInitialDeltas(Matrix output, std::vector<Matrix> outputs); //used in last time step of training
+    std::vector<Matrix> CalculateDeltas(Matrix output, std::vector<Matrix> outputs, std::vector<Matrix> nexttimestepdeltas); //used in all time steps except the last time step
 };
 
 #endif

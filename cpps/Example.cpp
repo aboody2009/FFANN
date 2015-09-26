@@ -110,6 +110,8 @@ int main()
     if (answer != 'c')
         return 0;
     std::cout << "\n\n\nRunning RNN Test..." << std::endl;
+    /*
+    //create a recurrent neural network with an input vector size of 5 and with 3 layers
     RNN testRNN(5 , 3);
     std::vector<std::vector<Matrix> > rnnoutputdata;
     Matrix rnninput(5, 1);
@@ -128,6 +130,21 @@ int main()
         std::cout << "\n";
         std::cout << "\n";
     }
+    */
+    
+    //we will train this network on a sine wave
+    RNN testRNN2(1, 3);
+    
+    //generate sequence
+    std::vector<Matrix> sequence;
+    for (float i = -1.0f; i <= 1.0f; i += 0.01f)
+    {
+        Matrix s(1, 1);
+        s.Elements[0] = i;
+        sequence.push_back(s);
+    }
+    
+    testRNN2.TrainWithBackPropagation(sequence, 0.001f);
     
 	return 0;
 }

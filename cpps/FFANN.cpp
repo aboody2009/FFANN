@@ -330,10 +330,11 @@ std::vector<Matrix> RNN::PartialFeedFoward(Matrix input, std::vector<Matrix> rec
 
 void RNN::TrainWithBackPropagation(std::vector<Matrix> sequence, double learning_rate)
 {
+    //do a feed forward pass, with the sequence as the input
     std::vector<std::vector<Matrix> > networkdata;
-    Matrix prev_output;
     for (int i = 0; i < sequence.size() - 2; i++)
     {
+        //the first feedforward has no recurrence
         if (i == 0)
         {
             std::vector<Matrix> zerorecurrence;
@@ -349,4 +350,123 @@ void RNN::TrainWithBackPropagation(std::vector<Matrix> sequence, double learning
             networkdata.push_back(PartialFeedFoward(sequence[i], networkdata[networkdata.size() - 1]));
         }
     }
+    
+    //calculate the deltas for the network
+    std::vector<std::vector<Matrix> > networkdeltas;
+    
+    //last network deltas are handled slightly differently
+    networkdeltas.push_back(CalculateInitialDeltas(sequence[sequence.size() - 1], networkdata[networkdata.size() - 1]));
+    
+    //calculate the rest of the deltas
+    for (int i = (int)sequence.size() - 2; i > 0; i--)
+    {
+        networkdeltas.push_back(CalculateDeltas(sequence[i], networkdata[i - 1], networkdeltas[networkdeltas.size() - 1]));
+    }
+    
+    std::vector<std::vector<Matrix> > flippednetworkdeltas; //put the deltas in the right order, just makes things easier
+}
+
+std::vector<Matrix> RNN::CalculateInitialDeltas(Matrix output, std::vector<Matrix> outputs)
+{
+    std::vector<Matrix> zerorecurrence;
+    for (int j = 0; j < Num_Layers; j++)
+    {
+        Matrix zr(InputVectorSize, 1);
+        zerorecurrence.push_back(zr);
+    }
+    
+    std::vector<Matrix> temp_deltas; //layer deltas stored backwards in order
+    
+    //calculate cost function
+    double cost = 0.0f;
+    Matrix partial_cost_matrix(InputVectorSize, 1);
+    partial_cost_matrix = output + (outputs[outputs.size() - 1] * -1);
+    for (int i = 0; i < partial_cost_matrix.Elements.size(); i++)
+    {
+        cost += 0.5f * partial_cost_matrix.Elements[i] * partial_cost_matrix.Elements[i];
+    }
+    //calculate last layer deltas
+    Matrix lld(InputVectorSize, 1);
+    lld = outputs[outputs.size() - 1] + (output * -1);
+    for (int i = 0; i < lld.Dimensions[0]; i++)
+    {
+        double a = outputs[outputs.size() - 1].Elements[i];
+        lld.Elements[i] *= a * (1 - a); //derivative of activation function
+    }
+    temp_deltas.push_back(lld);
+    
+    //calculate the rest of the deltas through back propagation
+    int j = 0; //this keeps track of the index for the next layer's delta
+    for (int i = Num_Layers - 2; i >= 0; i--) //start at the second to last layer
+    {
+        Matrix delta(InputVectorSize, 1);
+        delta = Weights[i + 1] * temp_deltas[j];
+        j++;
+        for (int k = 0; k < delta.Dimensions[0]; k++)
+        {
+            double a = outputs[i].Elements[k];
+            delta.Elements[k] *= a * (1 - a); //derivative of activation function
+        }
+        temp_deltas.push_back(delta);
+    }
+    
+    //put the deltas into a new vector object in the correct order
+    std::vector<Matrix> deltas;
+    for (int i = (int)temp_deltas.size() - 1; i >= 0; i--)
+    {
+        deltas.push_back(temp_deltas[i]);
+    }
+    return deltas;
+}
+
+std::vector<Matrix> RNN::CalculateDeltas(Matrix output, std::vector<Matrix> outputs, std::vector<Matrix> nexttimestepdeltas)
+{
+    std::vector<Matrix> temp_deltas; //layer deltas stored backwards in order
+    
+    //calculate cost function
+    double cost = 0.0f;
+    Matrix partial_cost_matrix(InputVectorSize, 1);
+    partial_cost_matrix = output + (outputs[outputs.size() - 1] * -1);
+    for (int i = 0; i < partial_cost_matrix.Elements.size(); i++)
+    {
+        cost += 0.5f * partial_cost_matrix.Elements[i] * partial_cost_matrix.Elements[i];
+    }
+    //calculate last layer deltas
+    Matrix lld(InputVectorSize, 1);
+    lld = outputs[outputs.size() - 1] + (output * -1);
+    for (int i = 0; i < lld.Dimensions[0]; i++)
+    {
+        double a = outputs[outputs.size() - 1].Elements[i];
+        lld.Elements[i] *= a * (1 - a); //derivative of activation function
+    }
+    temp_deltas.push_back(lld);
+    
+    //calculate the rest of the deltas through back propagation
+    int j = 0; //this keeps track of the index for the next layer's delta
+    for (int i = Num_Layers - 2; i >= 0; i--) //start at the second to last layer
+    {
+        Matrix delta(InputVectorSize, 1);
+        delta = Weights[i + 1] * temp_deltas[j];
+        j++;
+        for (int k = 0; k < delta.Dimensions[0]; k++)
+        {
+            double a = outputs[i].Elements[k];
+            delta.Elements[k] *= a * (1 - a); //derivative of activation function
+            
+            //calculate the deltas due to the recurrent weights
+            if (i != 0)
+            {
+                delta.Elements[k] += RecurrentWeights[i].Elements[k] * nexttimestepdeltas[i].Elements[k] * a * (1 - a);
+            }
+        }
+        temp_deltas.push_back(delta);
+    }
+    
+    //put the deltas into a new vector object in the correct order
+    std::vector<Matrix> deltas;
+    for (int i = (int)temp_deltas.size() - 1; i >= 0; i--)
+    {
+        deltas.push_back(temp_deltas[i]);
+    }
+    return deltas;
 }
