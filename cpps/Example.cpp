@@ -1,5 +1,5 @@
 //Sully Chen 2015
-//This is example code which creates a neural network and trains it to recognize the larger number out of a pair of floats ranging -1 to 1
+//This is example code which creates a neural network and trains it to recognize the larger number out of a pair of doubles ranging -1 to 1
 //I ran this code with 1000000 examples at a learning rate of 0.001, and achieved 95% to 99% accuracy. I recommend these training settings
 #include <iostream>
 #include <cstdlib>
@@ -20,14 +20,14 @@ int main()
 	FFANN testFFANN(dimensions, 3);
 
 	int num_examples;
-	float learning_rate = 0.0f;
+	double learning_rate = 0.0f;
 
 	std::cout << "Train how many trials?: ";
 	std::cin >> num_examples;
 	std::cout << "At what learning rate?: ";
 	std::cin >> learning_rate;
 
-	const float original_learning_rate = learning_rate;
+	const double original_learning_rate = learning_rate;
 
 	std::ofstream saveFile("cost_function_data.txt");
 
@@ -35,7 +35,7 @@ int main()
 	for (int i = 0; i < num_examples; i++)
 	{
 		//create inputs
-		float inputs[2] = { (rand() % 200 - 100) / 100.0f, (rand() % 200 - 100) / 100.0f };
+		double inputs[2] = { (rand() % 200 - 100) / 100.0f, (rand() % 200 - 100) / 100.0f };
 		if (inputs[0] == inputs[1])
 			inputs[0] += (rand() % 200 - 100) / 1000.0f;
 
@@ -43,7 +43,7 @@ int main()
 		Matrix input(2, 1, inputs);
 
 		//create outputs based on which input is larger
-		float outputs[2];
+		double outputs[2];
 		if (inputs[0] > inputs[1])
 		{
 			outputs[0] = 1.0f;
@@ -61,7 +61,7 @@ int main()
 			learning_rate = original_learning_rate * 0.1f;
 
 		//save cost function data
-		float cost = testFFANN.TrainWithBackPropagation(input, output, learning_rate);
+		double cost = testFFANN.TrainWithBackPropagation(input, output, learning_rate);
 		if (i % (int)(num_examples / 100.0f) == 0)
 		{
 			saveFile << i << ", " << cost;
@@ -80,7 +80,7 @@ int main()
 
 	for (int i = 0; i < num_trials; i++)
 	{
-		float inputs[2] = { 0.0f, 0.0f };
+		double inputs[2] = { 0.0f, 0.0f };
 		while (inputs[0] == inputs[1])
 		{
 			inputs[0] = (rand() % 200 - 100) / 100.0f;

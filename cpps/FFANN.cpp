@@ -72,14 +72,14 @@ std::vector<Matrix> FFANN::FeedForward(Matrix input)
 	return outputs;
 }
 
-float FFANN::TrainWithBackPropagation(Matrix input, Matrix output, float learning_rate)
+double FFANN::TrainWithBackPropagation(Matrix input, Matrix output, double learning_rate)
 {
 	std::vector<Matrix> outputs = FeedForward(input);
 
 	std::vector<Matrix> temp_deltas; //layer deltas stored backwards in order
 
 	//calculate cost function
-	float cost = 0.0f;
+	double cost = 0.0f;
 	Matrix partial_cost_matrix(Dimensions[Num_Layers - 1], 1);
 	partial_cost_matrix = output + (outputs[outputs.size() - 1] * -1);
 	for (int i = 0; i < partial_cost_matrix.Elements.size(); i++)
@@ -91,7 +91,7 @@ float FFANN::TrainWithBackPropagation(Matrix input, Matrix output, float learnin
 	lld = outputs[outputs.size() - 1] + (output * -1);
 	for (int i = 0; i < lld.Dimensions[0]; i++)
 	{
-		float a = outputs[outputs.size() - 1].Elements[i];
+		double a = outputs[outputs.size() - 1].Elements[i];
 		lld.Elements[i] *= a * (1 - a); //derivative of activation function
 	}
 	temp_deltas.push_back(lld);
@@ -105,7 +105,7 @@ float FFANN::TrainWithBackPropagation(Matrix input, Matrix output, float learnin
 		j++;
 		for (int k = 0; k < delta.Dimensions[0]; k++)
 		{
-			float a = outputs[i].Elements[k];
+			double a = outputs[i].Elements[k];
 			delta.Elements[k] *= a * (1 - a); //derivative of activation function
 		}
 		temp_deltas.push_back(delta);
@@ -133,7 +133,7 @@ float FFANN::TrainWithBackPropagation(Matrix input, Matrix output, float learnin
 	return cost;
 }
 
-FFANN BreedNetworks(FFANN Parent1, FFANN Parent2, float mutation_probability, float mutation_range)
+FFANN BreedNetworks(FFANN Parent1, FFANN Parent2, double mutation_probability, double mutation_range)
 {
 	if (mutation_probability > 1.0f)
 	{
@@ -181,7 +181,7 @@ FFANN BreedNetworks(FFANN Parent1, FFANN Parent2, float mutation_probability, fl
 		//randomly mutate genes
 		for (int k = 0; k < offspringnetwork.Weights[i].Elements.size(); k++)
 		{
-			int random_int = rand() % (int)((1.01f - mutation_probability) * 1000); //we round mutation_probability * 1000 to an integer to ensure it is not a float
+			int random_int = rand() % (int)((1.01f - mutation_probability) * 1000); //we round mutation_probability * 1000 to an integer to ensure it is not a double
 			for (int j = 0; j < 10; j++) //we're choosing out of 1000 to get precision up to the hundredth place, so we must take 10 samples to get a probability out of 100
 			{
 				//random selection of gene
@@ -209,7 +209,7 @@ FFANN BreedNetworks(FFANN Parent1, FFANN Parent2, float mutation_probability, fl
 		//randomly mutate genes
 		for (int k = 0; k < offspringnetwork.Biases[i].Elements.size(); k++)
 		{
-			int random_int = rand() % (int)((1.01f - mutation_probability) * 1000); //we round mutation_probability * 1000 to an integer to ensure it is not a float
+			int random_int = rand() % (int)((1.01f - mutation_probability) * 1000); //we round mutation_probability * 1000 to an integer to ensure it is not a double
 			for (int j = 0; j < 10; j++) //we're choosing out of 1000 to get precision up to the hundredth place, so we must take 10 samples to get a probability out of 100
 			{
 				//random selection of gene
@@ -326,4 +326,27 @@ std::vector<Matrix> RNN::PartialFeedFoward(Matrix input, std::vector<Matrix> rec
     }
     
     return outputs;
+}
+
+void RNN::TrainWithBackPropagation(std::vector<Matrix> sequence, double learning_rate)
+{
+    std::vector<std::vector<Matrix> > networkdata;
+    Matrix prev_output;
+    for (int i = 0; i < sequence.size() - 2; i++)
+    {
+        if (i == 0)
+        {
+            std::vector<Matrix> zerorecurrence;
+            for (int j = 0; j < Num_Layers; j++)
+            {
+                Matrix zr(InputVectorSize, 1);
+                zerorecurrence.push_back(zr);
+            }
+            networkdata.push_back(PartialFeedFoward(sequence[0], zerorecurrence));
+        }
+        else
+        {
+            networkdata.push_back(PartialFeedFoward(sequence[i], networkdata[networkdata.size() - 1]));
+        }
+    }
 }

@@ -18,15 +18,15 @@ Matrix::Matrix(int row_dim, int col_dim)
 {
 	Dimensions[0] = row_dim;
 	Dimensions[1] = col_dim;
-	Elements = std::vector<float>(row_dim * col_dim, 0.0f);
+	Elements = std::vector<double>(row_dim * col_dim, 0.0f);
 }
 
 //initialize matrix with elements specified
-Matrix::Matrix(int row_dim, int col_dim, float* elements)
+Matrix::Matrix(int row_dim, int col_dim, double* elements)
 {
 	Dimensions[0] = row_dim;
 	Dimensions[1] = col_dim;
-	Elements = std::vector<float>(elements, elements + row_dim*col_dim);
+	Elements = std::vector<double>(elements, elements + row_dim*col_dim);
 }
 
 //matrix multiplication
@@ -45,7 +45,7 @@ Matrix Matrix::operator*(const Matrix& m)
 	{
 		for (int j = 0; j < m.Dimensions[1]; j++)
 		{
-			float sum = 0.0f;
+			double sum = 0.0f;
 			for (int k = 0; k < this->Dimensions[1]; k++)
 			{
 				sum += this->Elements[i * this->Dimensions[1] + k]
@@ -59,7 +59,7 @@ Matrix Matrix::operator*(const Matrix& m)
 }
 
 //matrix scalar multiplication
-Matrix Matrix::operator*(const float& f)
+Matrix Matrix::operator*(const double& f)
 {
 	Matrix out(this->Dimensions[0], this->Dimensions[1]);
 	for (int i = 0; i < this->Dimensions[0]; i++)
