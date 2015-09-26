@@ -348,7 +348,9 @@ void RNN::TrainWithBackPropagation(std::vector<Matrix> sequence, double learning
         }
         else
         {
+            //I'm not sure which one of these is mathematically correct
             networkdata.push_back(PartialFeedFoward(sequence[i], networkdata[networkdata.size() - 1]));
+            //networkdata.push_back(PartialFeedFoward(networkdata[networkdata.size() - 1][networkdata[networkdata.size() - 1].size() - 1], networkdata[networkdata.size() - 1]));
         }
     }
     

@@ -150,7 +150,7 @@ int main()
     for (int i = 0; i < 1000000; i++)
     {
         testRNN2.TrainWithBackPropagation(sequence, 0.001f);
-        if (i % 100 == 0)
+        if (i % 1000 == 0)
             std::cout << i << " iterations complete" << std::endl;
     }
     
