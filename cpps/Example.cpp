@@ -157,7 +157,7 @@ int main()
     std::vector<std::vector<Matrix> > RNNTestData = testRNN2.FeedForward(sequence[0], 100);
     for (int i = 0; i < RNNTestData.size(); i++)
     {
-        RNNTestData[i][RNNTestData.size() - 1].CoutMatrix();
+        RNNTestData[i][RNNTestData[i].size() - 1].CoutMatrix();
     }
     */
      
