@@ -110,6 +110,7 @@ int main()
     if (answer != 'c')
         return 0;
     std::cout << "\n\n\nRunning RNN Test..." << std::endl;
+    
     /*
     //create a recurrent neural network with an input vector size of 5 and with 3 layers
     RNN testRNN(5 , 3);
@@ -132,21 +133,21 @@ int main()
     }
     */
     
-    /*
+    
     //RNN CODE NOT WORKING YET
     //we will train this network on a sine wave
-    RNN testRNN2(1, 3);
+    RNN testRNN2(10, 3);
     
     //generate sequence
     std::vector<Matrix> sequence;
-    for (float i = -1.0f; i <= 1.0f; i += 0.01f)
+    for (int i = 0; i < 10; i++)
     {
-        Matrix s(1, 1);
-        s.Elements[0] = i;
+        Matrix s(10, 1);
+        s.Elements[i] = 1.0f;
         sequence.push_back(s);
     }
     
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < 1000000; i++)
     {
         testRNN2.TrainWithBackPropagation(sequence, 0.001f);
         if (i % 100 == 0)
@@ -154,12 +155,22 @@ int main()
     }
     
     //test the network
-    std::vector<std::vector<Matrix> > RNNTestData = testRNN2.FeedForward(sequence[0], 100);
+    std::vector<std::vector<Matrix> > RNNTestData = testRNN2.FeedForward(sequence[0], 10);
     for (int i = 0; i < RNNTestData.size(); i++)
     {
-        RNNTestData[i][RNNTestData[i].size() - 1].CoutMatrix();
+        double max = 0.0f;
+        int max_j = 0;
+        for (int j = 0; j < testRNN2.InputVectorSize; j++)
+        {
+            if (RNNTestData[i][RNNTestData[i].size() - 1].Elements[j] > max)
+            {
+                max = RNNTestData[i][RNNTestData[i].size() - 1].Elements[j];
+                max_j = j;
+            }
+        }
+        std::cout << max_j << std::endl;
     }
-    */
+    
      
 	return 0;
 }
