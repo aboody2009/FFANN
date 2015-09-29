@@ -489,10 +489,7 @@ std::vector<Matrix> RNN::CalculateDeltas(Matrix output, std::vector<Matrix> outp
             delta.Elements[k] *= a * (1 - a); //derivative of activation function
             
             //calculate the deltas due to the recurrent weights
-            if (i != 0)
-            {
-                delta.Elements[k] += RecurrentWeights[i].Elements[k] * nexttimestepdeltas[i].Elements[k] * a * (1 - a);
-            }
+            delta.Elements[k] += RecurrentWeights[i + 1].Elements[k] * nexttimestepdeltas[i].Elements[k] * a * (1 - a);
         }
         temp_deltas.push_back(delta);
     }

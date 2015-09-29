@@ -135,7 +135,6 @@ int main()
     
     
     //RNN CODE NOT WORKING YET
-    //we will train this network on a sine wave
     RNN testRNN2(10, 3);
     
     //generate sequence
@@ -147,9 +146,14 @@ int main()
         sequence.push_back(s);
     }
     
-    for (int i = 0; i < 1000000; i++)
+    for (int i = 0; i < 10000000; i++)
     {
-        testRNN2.TrainWithBackPropagation(sequence, 0.001f);
+        double learning_rate = 0.001f;
+        if (i > 8000000)
+            learning_rate = 0.0001f;
+        if (i > 9500000)
+            learning_rate = 0.00001f;
+        testRNN2.TrainWithBackPropagation(sequence, learning_rate);
         if (i % 1000 == 0)
             std::cout << i << " iterations complete" << std::endl;
     }
