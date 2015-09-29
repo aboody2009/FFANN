@@ -175,6 +175,5 @@ int main()
         std::cout << max_j << std::endl;
     }
     
-     
-	return 0;
+    return 0;
 }
