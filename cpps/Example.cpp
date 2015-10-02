@@ -13,7 +13,7 @@
 int main()
 {
 	//seed random number generator
-	srand((uint)time(NULL));
+	srand((unsigned int)time(NULL));
 	//create structure of neural network: 2 input neurons, 2 output neurons
 	int dimensions[3] = { 2, 3, 2 };
 	//create the neural network
@@ -101,79 +101,154 @@ int main()
 	}
 
 	std::cout << "Done Testing! Here are the results:\n" << std::endl << "Accuracy: " << num_correct * 100 / num_trials << "% correct" << std::endl;
-    
+
 	system("PAUSE");
-    
-    std::cout << "\nType \"c\" to continue to RNN test, otherwise type something else and the program will quit" << std::endl;
-    char answer;
-    std::cin >> answer;
-    if (answer != 'c')
-        return 0;
-    std::cout << "\n\n\nRunning RNN Test..." << std::endl;
-    
-    /*
-    //create a recurrent neural network with an input vector size of 5 and with 3 layers
-    RNN testRNN(5 , 3);
-    std::vector<std::vector<Matrix> > rnnoutputdata;
-    Matrix rnninput(5, 1);
-    for (int i = 0; i < 5; i++)
-    {
-        rnninput.Elements[i] = (rand() % 200 - 100) / 100.0f;
-    }
-    rnnoutputdata = testRNN.FeedForward(rnninput, 10);
-    for (int i = 0; i < rnnoutputdata.size(); i++)
-    {
-        for (int j = 0; j < rnnoutputdata[i].size(); j++)
-        {
-            rnnoutputdata[i][j].CoutMatrix();
-            std::cout << "\n";
-        }
-        std::cout << "\n";
-        std::cout << "\n";
-    }
-    */
-    
-    
-    //RNN CODE NOT WORKING YET
-    RNN testRNN2(10, 3);
-    
-    //generate sequence
-    std::vector<Matrix> sequence;
-    for (int i = 0; i < 10; i++)
-    {
-        Matrix s(10, 1);
-        s.Elements[i] = 1.0f;
-        sequence.push_back(s);
-    }
-    
-    for (int i = 0; i < 10000000; i++)
-    {
-        double learning_rate = 0.001f;
-        if (i > 8000000)
-            learning_rate = 0.0001f;
-        if (i > 9500000)
-            learning_rate = 0.00001f;
-        testRNN2.TrainWithBackPropagation(sequence, learning_rate);
-        if (i % 1000 == 0)
-            std::cout << i << " iterations complete" << std::endl;
-    }
-    
-    //test the network
-    std::vector<std::vector<Matrix> > RNNTestData = testRNN2.FeedForward(sequence[0], 10);
-    for (int i = 0; i < RNNTestData.size(); i++)
-    {
-        double max = 0.0f;
-        int max_j = 0;
-        for (int j = 0; j < testRNN2.InputVectorSize; j++)
-        {
-            if (RNNTestData[i][RNNTestData[i].size() - 1].Elements[j] > max)
-            {
-                max = RNNTestData[i][RNNTestData[i].size() - 1].Elements[j];
-                max_j = j;
-            }
-        }
-        std::cout << max_j << std::endl;
-    }
-    
-    return 0;
+
+	std::cout << "Continue with sine wave function approximation test? y/n: ";
+	char yesorno;
+	std::cin >> yesorno;
+	if (yesorno != 'y')
+		return 0;
+	std::cout << "\n";
+
+	int dimensions2[3] = { 1, 20, 1 };
+
+	std::ofstream saveFile1("accuracy_cost_data_for_sine_wave.txt");
+
+	FFANN SineFFANN(dimensions2, 3);
+
+	double increment = 0.1f;
+
+	for (int i = 0; i < 1000000; i++)
+	{
+		double cost = 0.0f;
+		for (double j = -1.0f; j <= 1.0f; j += increment)
+		{
+			Matrix m1(1, 1);
+			m1.Elements[0] = j;
+			Matrix m2(1, 1);
+			m2.Elements[0] = 0.5f * sin(3.1415926535f * j) + 0.5f;
+			if (i < 100000)
+			{
+				cost += SineFFANN.TrainWithBackPropagation(m1, m2, 0.1f);
+			}
+			else if (i < 500000)
+			{
+				cost += SineFFANN.TrainWithBackPropagation(m1, m2, 0.01f);
+			}
+			else if (i < 900000)
+			{
+				cost += SineFFANN.TrainWithBackPropagation(m1, m2, 0.001f);
+			}
+			else
+			{
+				cost += SineFFANN.TrainWithBackPropagation(m1, m2, 0.0001f);
+			}
+		}
+
+		if (i % 1000 == 0)
+		{
+			std::cout << "iteration: " << i << std::endl;
+			std::cout << "cost function: " << cost / (2.0f / increment) << std::endl;
+			double average_error = 0.0f;
+			for (double j = -1.0f; j <= 1.0f; j += increment)
+			{
+				Matrix m1(1, 1);
+				m1.Elements[0] = j;
+				Matrix m2(1, 1);
+				m2.Elements[0] = 0.5f * sin(3.1415926535f * j) + 0.5f;
+				std::vector<Matrix> mvec = SineFFANN.FeedForward(m1);
+				average_error += std::abs(mvec[mvec.size() - 1].Elements[0] - m2.Elements[0]);
+			}
+			std::cout << "accuracy: " << (1 - average_error / (2.0f / increment)) * 100 << "%\n" << std::endl;
+			saveFile1 << i << ", " << 1 - average_error / (2.0f / increment) << ", " << cost / (2.0f / increment) << std::endl;
+		}
+	}
+
+	std::ofstream saveFile2("after_training_output.txt");
+
+	for (double j = -1.0f; j <= 1.0f; j += 0.01f)
+	{
+		Matrix m1(1, 1);
+		m1.Elements[0] = j;
+		std::vector<Matrix> mvec = SineFFANN.FeedForward(m1);
+		saveFile2 << j << ", " << mvec[mvec.size() - 1].Elements[0] << std::endl;
+	}
+
+	saveFile2.close();
+
+	std::cout << "\nType \"c\" to continue to RNN test, otherwise type something else and the program will quit" << std::endl;
+	char answer;
+	std::cin >> answer;
+	if (answer != 'c')
+		return 0;
+	std::cout << "\n\n\nRunning RNN Test..." << std::endl;
+
+	/*
+	//create a recurrent neural network with an input vector size of 5 and with 3 layers
+	RNN testRNN(5 , 3);
+	std::vector<std::vector<Matrix> > rnnoutputdata;
+	Matrix rnninput(5, 1);
+	for (int i = 0; i < 5; i++)
+	{
+	rnninput.Elements[i] = (rand() % 200 - 100) / 100.0f;
+	}
+	rnnoutputdata = testRNN.FeedForward(rnninput, 10);
+	for (int i = 0; i < rnnoutputdata.size(); i++)
+	{
+	for (int j = 0; j < rnnoutputdata[i].size(); j++)
+	{
+	rnnoutputdata[i][j].CoutMatrix();
+	std::cout << "\n";
+	}
+	std::cout << "\n";
+	std::cout << "\n";
+	}
+	*/
+
+
+	//RNN CODE NOT WORKING YET
+	RNN testRNN2(10, 3);
+
+	//generate sequence
+	std::vector<Matrix> sequence;
+	for (int i = 0; i < 10; i++)
+	{
+		Matrix s(10, 1);
+		s.Elements[i] = 1.0f;
+		sequence.push_back(s);
+	}
+
+	for (int i = 0; i < 1000000; i++)
+	{
+		double learning_rate = 0.001f;
+		if (i > 800000)
+			learning_rate = 0.0001f;
+		if (i > 950000)
+			learning_rate = 0.00001f;
+		testRNN2.TrainWithBackPropagation(sequence, learning_rate);
+		if (i % 1000 == 0)
+			std::cout << i << " iterations complete" << std::endl;
+	}
+
+	//test the network
+	std::vector<std::vector<Matrix> > RNNTestData = testRNN2.FeedForward(sequence[0], 10);
+	for (int i = 0; i < RNNTestData.size(); i++)
+	{
+		double max = 0.0f;
+		int max_j = 0;
+		for (int j = 0; j < testRNN2.InputVectorSize; j++)
+		{
+			if (RNNTestData[i][RNNTestData[i].size() - 1].Elements[j] > max)
+			{
+				max = RNNTestData[i][RNNTestData[i].size() - 1].Elements[j];
+				max_j = j;
+			}
+		}
+		std::cout << max_j << std::endl;
+	}
+
+	system("PAUSE");
+
+	return 0;
 }
