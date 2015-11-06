@@ -1,4 +1,4 @@
-//Sully Chen 2015
+//  Copyright © 2015 Sully Chen. All rights reserved.
 
 #include "MatrixMath.h"
 #include <iostream>
