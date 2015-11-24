@@ -18,3 +18,5 @@ Have fun!
 11/02/2015: Apologies, it's been a while since I've updated anything. I'm in my junior year of high school so it's getting a little busy. I am working on adding convolutional neural network support, so hopefully something can get working soon. So far, I have not found the problem in the recurrent neural network code.
 
 11/10/2015: I'm having some trouble getting the convolutional neural network code to work, and I'm also having trouble finding ways to make the structure flexible enough. Perhaps I need to do more research into the structure of convolutional neural networks, but either way I hope to find a way to implement the structure soon.
+
+11/24/2015: Okay, I think I may have found a way to implement a small 32x32 convolutional neural network. I will work on it today and update the code if it works somewhat smoothly!
