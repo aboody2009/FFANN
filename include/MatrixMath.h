@@ -1,5 +1,3 @@
-//  Copyright © 2015 Sully Chen. All rights reserved.
-
 #pragma once
 #ifndef MATRIXMATH_H
 #define MATRIXMATH_H

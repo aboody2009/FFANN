@@ -1,4 +1,4 @@
-//  Copyright © 2015 Sully Chen. All rights reserved.
+//Sully Chen 2015
 
 #pragma once
 #ifndef FFANN_H
@@ -40,5 +40,7 @@ private:
     std::vector<Matrix> CalculateInitialDeltas(Matrix output, std::vector<Matrix> outputs); //used in last time step of training
     std::vector<Matrix> CalculateDeltas(Matrix output, std::vector<Matrix> outputs, std::vector<Matrix> nexttimestepdeltas); //used in all time steps except the last time step
 };
+
+RNN RNNBreedNetworks(RNN Parent1, RNN Parent2, double mutation_probability, double mutation_range);
 
 #endif

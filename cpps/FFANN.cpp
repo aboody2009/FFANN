@@ -1,4 +1,4 @@
-//  Copyright © 2015 Sully Chen. All rights reserved.
+//Sully Chen 2015
 
 #include <iostream>
 #include <cstdlib>
@@ -266,6 +266,97 @@ RNN::RNN(int input_vector_size, int num_layers) : InputVectorSize(input_vector_s
         }
         Biases.push_back(m);
     }
+}
+
+RNN RNNBreedNetworks(RNN Parent1, RNN Parent2, double mutation_probability, double mutation_range)
+{
+    if (mutation_probability > 1.0f)
+    {
+        mutation_probability = 1.0f;
+        std::cout << "Warning: keep mutation probability between 0.0 and 1.0. Capping to 1.0" << std::endl;
+    }
+    else if (mutation_probability < 0.0f)
+    {
+        mutation_probability = 0.0f;
+        std::cout << "Warning: keep mutation probability between 0.0 and 1.0. Flooring to 0.0" << std::endl;
+    }
+    //Make sure the networks are the same size
+    if (Parent1.Num_Layers != Parent2.Num_Layers)
+    {
+        std::cout << "Error! Cannot breed due to network formating!" << std::endl;
+        RNN rnn(0, 0);
+        return rnn;
+    }
+    if (Parent1.Num_Layers != Parent2.Num_Layers || Parent1.InputVectorSize != Parent2.InputVectorSize)
+    {
+        std::cout << "Error! Cannot breed due to network formating!" << std::endl;
+        RNN rnn(0, 0);
+        return rnn;
+    }
+    
+    //Genetic algorithm
+    RNN offspringnetwork(Parent1.InputVectorSize, Parent1.Num_Layers); //initialize offspring network
+    
+    //crossover the genes of the weights
+    for (int i = 1; i < Parent1.Num_Layers; i++) //we start at 1 because weights[0] is a filler matrix and does not contain any elements
+    {
+        int crossoverpoint = rand() % Parent1.Weights[i].Elements.size();
+        for (int j = 0; j < crossoverpoint; j++)
+        {
+            offspringnetwork.Weights[i].Elements[j] = Parent1.Weights[i].Elements[j]; //one part of the gene is from parent 1
+        }
+        for (int j = crossoverpoint; j < offspringnetwork.Weights[i].Elements.size(); j++)
+        {
+            offspringnetwork.Weights[i].Elements[j] = Parent2.Weights[i].Elements[j]; //the other part of the gene is from parent 2
+        }
+        
+        //randomly mutate genes
+        for (int k = 0; k < offspringnetwork.Weights[i].Elements.size(); k++)
+        {
+            int random_int = rand() % (int)((1.01f - mutation_probability) * 1000); //we round mutation_probability * 1000 to an integer to ensure it is not a double
+            for (int j = 0; j < 10; j++) //we're choosing out of 1000 to get precision up to the hundredth place, so we must take 10 samples to get a probability out of 100
+            {
+                //random selection of gene
+                if (random_int == rand() % (int)(mutation_probability * 1000))
+                {
+                    offspringnetwork.Weights[i].Elements[k] += (rand() % (int)(mutation_range * 20000 - mutation_range * 10000)) / 10000.0f; //mutate the gene
+                }
+            }
+        }
+    }
+    
+    //crossover the genes of the biases and recurrent weights
+    for (int i = 0; i < Parent1.Num_Layers; i++)
+    {
+        int crossoverpoint = rand() % Parent1.Biases[i].Elements.size();
+        for (int j = 0; j < crossoverpoint; j++)
+        {
+            offspringnetwork.Biases[i].Elements[j] = Parent1.Biases[i].Elements[j]; //one part of the gene is from parent 1
+            offspringnetwork.RecurrentWeights[i].Elements[j] = Parent1.RecurrentWeights[i].Elements[j];
+        }
+        for (int j = crossoverpoint; j < offspringnetwork.Biases[i].Elements.size(); j++)
+        {
+            offspringnetwork.Biases[i].Elements[j] = Parent2.Biases[i].Elements[j]; //the other part of the gene is from parent 2
+            offspringnetwork.RecurrentWeights[i].Elements[j] = Parent2.RecurrentWeights[i].Elements[j];
+        }
+        
+        //randomly mutate genes
+        for (int k = 0; k < offspringnetwork.Biases[i].Elements.size(); k++)
+        {
+            int random_int = rand() % (int)((1.01f - mutation_probability) * 1000); //we round mutation_probability * 1000 to an integer to ensure it is not a double
+            for (int j = 0; j < 10; j++) //we're choosing out of 1000 to get precision up to the hundredth place, so we must take 10 samples to get a probability out of 100
+            {
+                //random selection of gene
+                if (random_int == rand() % (int)(mutation_probability * 1000))
+                {
+                    offspringnetwork.Biases[i].Elements[k] += (rand() % (int)(mutation_range * 20000 - mutation_range * 10000)) / 10000.0f; //mutate the gene
+                    offspringnetwork.RecurrentWeights[i].Elements[k] += (rand() % (int)(mutation_range * 20000 - mutation_range * 10000)) / 10000.0f; //mutate the gene
+                }
+            }
+        }
+    }
+    
+    return offspringnetwork;
 }
 
 std::vector<std::vector<Matrix> > RNN::FeedForward(Matrix input, int num_passes)
