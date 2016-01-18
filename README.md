@@ -20,3 +20,5 @@ Have fun!
 11/10/2015: I'm having some trouble getting the convolutional neural network code to work, and I'm also having trouble finding ways to make the structure flexible enough. Perhaps I need to do more research into the structure of convolutional neural networks, but either way I hope to find a way to implement the structure soon.
 
 12/05/2015: I added a basic genetic algorithm for recurrent neural networks.
+
+01/18/2016: I added a MNIST dataset test. The MNIST data was preprocessed by someone else and can be found here: http://cis.jhu.edu/~sachin/digit/digit.html
