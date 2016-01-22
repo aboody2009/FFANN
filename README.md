@@ -22,3 +22,5 @@ Have fun!
 12/05/2015: I added a basic genetic algorithm for recurrent neural networks.
 
 01/18/2016: I added a MNIST dataset test. The MNIST data was preprocessed by someone else and can be found here: http://cis.jhu.edu/~sachin/digit/digit.html
+
+01/22/2016: I added a program that lets the user draw a number using SFML and then attemps to recognize the number using a neural network trained on data from the MNIST dataset
