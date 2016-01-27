@@ -28,3 +28,5 @@ Have fun!
 01/24/2016: I think I may have found a fix for the RNN training problem. I'll try to implement it soon, hopefully it works.
 
 01/24/2016: By catching a few errors in the RNN code, as well as changing the training method to update weights and biases at each training step, the RNN training code is now working! Try the example in RNN_Test.cpp! More examples to come soon!
+
+01/27/2016: I added support for a 28x28 convolutional neural network, but it isn't training very well for some reason. I will look into the problem.
