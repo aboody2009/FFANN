@@ -1,7 +1,4 @@
 # FFANN
-===============================================
-Sorry! As of now the entire FFANN library is being redesigned and published under a new project name, work is in progress!
-
 09/18/2015
 This is an easy to use minimal feed forward artificial neural network library. Setup instructions are in the readme!
 
