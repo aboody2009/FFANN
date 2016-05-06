@@ -1,4 +1,6 @@
-# FFANN
+# FFANN - NO LONGER MAINTAINED -- NEW PROJECT IN DEVELOPMENT
+
+Hello! FFANN is no longer being maintained or developed. I'm currently working on a much more sophisticated deep learning library with modular layer structure that uses OpenCL for computation speed up! Check back in a few weeks!
 09/18/2015
 This is an easy to use minimal feed forward artificial neural network library. Setup instructions are in the readme!
 
