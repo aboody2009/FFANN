@@ -291,6 +291,8 @@ FFANN BreedNetworks(FFANN Parent1, FFANN Parent2, double mutation_probability, d
     return offspringnetwork;
 }
 
+//This RNN code is not implemented correctly and does not function correctly
+/*
 RNN::RNN(int input_vector_size, int num_layers) : InputVectorSize(input_vector_size), Num_Layers(num_layers)
 {
     //the first elements of the weights matrix vector object is just a filler to make the math look cleaner, it's not actually used
@@ -603,7 +605,10 @@ BackpropagationData RNN::TrainStep(Matrix input, Matrix output, std::vector<Matr
     
     return data;
 }
+*/
 
+//This convolutional neural network code is not implemented correctly and does not function correctly
+/*
 CovNet28x28::CovNet28x28()
 {
     Matrix l1b(28, 28);
@@ -833,6 +838,7 @@ double CovNet28x28::TrainWithBackPropagation(Matrix input, Matrix output, double
     
     return cost;
 }
+*/
 
 int MaxElement(Matrix m)
 {
